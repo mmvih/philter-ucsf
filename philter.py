@@ -60,12 +60,12 @@ class Philter:
         if "filters" in config:
             if not os.path.exists(config["filters"]):
                 raise Exception("Filepath does not exist", config["filters"])
-            self.patterns = json.loads(open(config["filters"], "r").read())
+            self.patterns = json.loads(open(config["filters"], "rb").read().decode('utf-8'))
 
         if "xml" in config:
             if not os.path.exists(config["xml"]):
                 raise Exception("Filepath does not exist", config["xml"])
-            self.xml = json.loads(open(config["xml"], "r", encoding='utf-8').read())
+            self.xml = json.loads(open(config["xml"], "rb").read().decode('utf-8'))
 
         if "stanford_ner_tagger" in config:
             if not os.path.exists(config["stanford_ner_tagger"]["classifier"]) and config["stanford_ner_tagger"]["download"] == False:
@@ -232,7 +232,7 @@ class Philter:
     
     def precompile(self, filepath):
         """ precompiles our regex to speed up pattern matching"""
-        regex = open(filepath,"r").read().strip()
+        regex = open(filepath,"rb").read().decode('utf-8').strip()
         re_compiled = None
         with warnings.catch_warnings(): #NOTE: this is not thread safe! but we want to print a more detailed warning message
             warnings.simplefilter(action="error", category=FutureWarning) # in order to print a detailed message
@@ -287,7 +287,7 @@ class Philter:
 
                 encoding = self.detect_encoding(filename)
                 if __debug__: print("reading text from " + filename)
-                txt = open(filename,"r", encoding=encoding['encoding'], errors='surrogateescape').read()
+                txt = open(filename,"rb").read().decode('utf-8')
 
                 # Get full self.include/exclude map before transform
                 self.data_all_files[filename] = {"text":txt, "phi":[],"non-phi":[]}
@@ -788,7 +788,7 @@ class Philter:
                 continue  
 
             encoding = self.detect_encoding(filename)
-            txt = open(filename,"r", encoding=encoding['encoding']).read()
+            txt = open(filename,"rb").read().decode('utf-8')
 
 
 
@@ -1094,7 +1094,7 @@ class Philter:
                     continue
 
                 encoding1 = self.detect_encoding(philtered_filename)
-                philtered = open(philtered_filename,"r").read()
+                philtered = open(philtered_filename,"rb").read().decode('utf-8')
                 
                           
                 philtered_words = re.split("(\s+)", philtered)
@@ -2271,13 +2271,13 @@ class Philter:
 
                 orig_filename = os.path.join( root , f )
                 encoding1 = self.detect_encoding(orig_filename)
-                orig = open(orig_filename,"r", encoding=encoding1['encoding']).read()
+                orig = open(orig_filename,"rb",).read().decode('utf-8')
 
                 orig_words = re.split("\s+", orig)
 
                 anno_filename = os.path.join( anno_folder , f.split(".")[0]+anno_suffix )
                 encoding2 = self.detect_encoding(anno_filename)
-                anno = open(anno_filename,"r", encoding=encoding2['encoding']).read()
+                anno = open(anno_filename,"rb",).read().decode('utf-8')
                 anno_words = re.split("\s+", anno)
 
                 anno_dict = {}
